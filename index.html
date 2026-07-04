@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StampWorld — Gizlilik Politikası</title>
+<style>
+  :root { --ink:#1A2238; --muted:#5B6B85; --amber:#D97706; --line:#E7ECF5; --bg:#F7F9FC; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6; }
+  .wrap { max-width:760px; margin:0 auto; padding:40px 22px 80px; }
+  header { display:flex; align-items:center; gap:12px; margin-bottom:6px; }
+  .logo { width:40px; height:40px; border-radius:11px;
+    background:linear-gradient(135deg,#F5B94A,#D97706); display:flex;
+    align-items:center; justify-content:center; font-size:22px; }
+  h1 { font-size:26px; margin:22px 0 4px; letter-spacing:-0.4px; }
+  .date { color:var(--muted); font-size:14px; margin-bottom:26px; }
+  h2 { font-size:19px; margin:34px 0 10px; }
+  p { margin:10px 0; }
+  a { color:var(--amber); }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:14.5px; }
+  th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--line);
+    vertical-align:top; }
+  th { background:#EEF2FB; font-weight:700; }
+  .note { color:var(--muted); }
+  strong { color:var(--ink); }
+  footer { margin-top:48px; padding-top:18px; border-top:1px solid var(--line);
+    color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">🌍</div>
+    <div><strong>StampWorld</strong></div>
+  </header>
+
+  <h1>Gizlilik Politikası</h1>
+  <div class="date">Son güncelleme: 3 Temmuz 2026</div>
+
+  <p>StampWorld ("uygulama"), gezginlerin ziyaret ettikleri yerleri GPS ve fotoğraf
+  doğrulamasıyla kaydedip dijital pasaport ve rozetler biriktirmesini sağlayan bir
+  mobil uygulamadır. Bu politika, hangi verileri neden topladığımızı ve haklarınızı
+  açıklar.</p>
+
+  <h2>Topladığımız Veriler</h2>
+  <table>
+    <tr><th>Veri</th><th>Amaç</th><th>Saklama</th></tr>
+    <tr><td>E-posta adresi</td><td>Hesap oluşturma ve giriş</td><td>Hesap silinene kadar</td></tr>
+    <tr><td>Ad (isteğe bağlı görünen ad)</td><td>Sıralama ve arkadaş listelerinde gösterim</td><td>Hesap silinene kadar</td></tr>
+    <tr><td>Ülke (kayıtta seçilir)</td><td>Lokal sıralama</td><td>Hesap silinene kadar</td></tr>
+    <tr><td>Görev tamamlama kayıtları (lokasyon, tarih, puan)</td><td>Pasaport, rozetler, sıralama, istatistikler</td><td>Hesap silinene kadar</td></tr>
+    <tr><td>Anlık konum (yalnızca doğrulama sırasında)</td><td>Görev lokasyonuna yakınlık kontrolü</td><td><strong>Saklanmaz</strong> — yalnızca doğrulama anında mesafe hesabında kullanılır; ham konum geçmişi tutulmaz</td></tr>
+    <tr><td>Görev fotoğrafı</td><td>Görev doğrulaması ve moderasyon</td><td>Moderasyon amacıyla sınırlı süre sunucuda tutulur, süre sonunda otomatik silinir <span class="note">(fotoğraf yükleme özelliği aktif edildiğinde geçerlidir)</span></td></tr>
+    <tr><td>Arkadaşlık bağlantıları</td><td>Arkadaş listesi ve arkadaş sıralaması</td><td>Hesap silinene kadar</td></tr>
+  </table>
+
+  <p><strong>Toplamadıklarımız:</strong> Arka planda konum takibi yapılmaz
+  ("kullanım sırasında" izni dışında konuma erişilmez). Rehber, mesajlar veya
+  cihazdaki diğer verilere erişilmez. Verileriniz üçüncü taraflara satılmaz.</p>
+
+  <h2>Konum Kullanımı</h2>
+  <p>Konumunuza yalnızca bir görevi doğruladığınız anda, "uygulama kullanılırken"
+  izniyle erişilir. Alınan koordinat, görev noktasına uzaklığınızı hesaplamak için
+  anlık olarak kullanılır ve <strong>kaydedilmez</strong>. Kaydedilen tek şey,
+  görevin tamamlandığı bilgisidir (görev kimliği + tarih).</p>
+
+  <h2>Verilerin Saklandığı Yer</h2>
+  <p>Tüm veriler, Avrupa Birliği içinde (Frankfurt, Almanya) barındırılan Supabase
+  altyapısında saklanır ve aktarım sırasında şifrelenir (TLS).</p>
+
+  <h2>Verilerin Görünürlüğü</h2>
+  <p>Görünen adınız ve toplam puanınız global/lokal sıralamalarda diğer
+  kullanıcılara gösterilir. Rozetleriniz ve temel istatistikleriniz yalnızca
+  <strong>karşılıklı onaylı</strong> arkadaşlarınıza görünür. Ziyaret geçmişiniz
+  (hangi lokasyonları gezdiğiniz) hiçbir kullanıcıya gösterilmez.</p>
+
+  <h2>Haklarınız (KVKK / GDPR)</h2>
+  <p><strong>Erişim ve düzeltme:</strong> Adınızı uygulama içinden değiştirebilirsiniz.<br>
+  <strong>Silme:</strong> Profil → Ayarlar → <strong>Hesabı Sil</strong> ile
+  hesabınızı ve tüm verilerinizi (tamamlamalar, rozetler, arkadaşlıklar, puanlar)
+  kalıcı olarak silebilirsiniz. Bu işlem geri alınamaz ve anında gerçekleşir.<br>
+  <strong>Taşınabilirlik ve diğer talepler:</strong> Aşağıdaki iletişim adresinden
+  bize ulaşabilirsiniz.</p>
+
+  <h2>Çocukların Gizliliği</h2>
+  <p>StampWorld 13 yaş altı kullanıcılara yönelik değildir ve bilerek bu yaş
+  grubundan veri toplamaz.</p>
+
+  <h2>Değişiklikler</h2>
+  <p>Bu politika güncellendiğinde tarih başlıkta yenilenir; önemli değişiklikler
+  uygulama içinden duyurulur.</p>
+
+  <h2>İletişim</h2>
+  <p>Sorularınız için: <a href="mailto:kadirtas.ehm@gmail.com">kadirtas.ehm@gmail.com</a></p>
+
+  <footer>© 2026 StampWorld · com.stampworld.app</footer>
+</div>
+</body>
+</html>
