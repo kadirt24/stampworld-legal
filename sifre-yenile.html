@@ -35,25 +35,25 @@
 <body>
 <div class="wrap">
   <div class="logo">🔑</div>
-  <h1>Yeni şifre belirle</h1>
+  <h1 id="h1t">Yeni şifre belirle</h1>
 
   <!-- Durum: bağlantı doğrulanıyor -->
   <p id="checking" class="center">Bağlantı doğrulanıyor…</p>
 
   <!-- Durum: geçersiz/süresi dolmuş bağlantı -->
   <div id="invalid" style="display:none">
-    <p class="center">Bu şifre sıfırlama bağlantısı geçersiz ya da süresi dolmuş.</p>
-    <p class="center">StampWorld uygulamasını açıp <strong>Şifremi unuttum</strong>
+    <p class="center" id="inv1">Bu şifre sıfırlama bağlantısı geçersiz ya da süresi dolmuş.</p>
+    <p class="center" id="inv2">StampWorld uygulamasını açıp <strong>Şifremi unuttum</strong>
     adımından yeni bir bağlantı isteyebilirsin.</p>
   </div>
 
   <!-- Durum: form -->
   <form id="form" style="display:none">
-    <p class="sub">StampWorld hesabın için yeni bir şifre seç.</p>
-    <label for="pw1">Yeni şifre</label>
+    <p class="sub" id="subT">StampWorld hesabın için yeni bir şifre seç.</p>
+    <label for="pw1" id="l1">Yeni şifre</label>
     <input id="pw1" type="password" autocomplete="new-password" minlength="8" required>
-    <p class="hint">En az 8 karakter, bir rakam içermeli.</p>
-    <label for="pw2">Yeni şifre (tekrar)</label>
+    <p class="hint" id="hintT">En az 8 karakter, bir rakam içermeli.</p>
+    <label for="pw2" id="l2">Yeni şifre (tekrar)</label>
     <input id="pw2" type="password" autocomplete="new-password" minlength="8" required>
     <button id="btn" type="submit">Şifreyi Güncelle</button>
     <div id="formMsg" class="msg"></div>
@@ -61,8 +61,8 @@
 
   <!-- Durum: başarı -->
   <div id="done" style="display:none">
-    <p class="center">✅ Şifren güncellendi.</p>
-    <p class="center">Artık StampWorld uygulamasına dönüp yeni şifrenle
+    <p class="center" id="d1">✅ Şifren güncellendi.</p>
+    <p class="center" id="d2">Artık StampWorld uygulamasına dönüp yeni şifrenle
     giriş yapabilirsin. Bu sayfayı kapatabilirsin.</p>
   </div>
 
@@ -72,6 +72,44 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 (async function () {
+  // Tarayıcı dili İngilizceyse arayüz EN olur (varsayılan TR).
+  var EN = (navigator.language || '').toLowerCase().indexOf('en') === 0;
+  var T = EN ? {
+    weak: 'Password must be at least 8 characters and include a digit.',
+    mismatch: 'Passwords do not match.',
+    same: 'The new password cannot be the same as the old one.',
+    failed: 'Password could not be updated: ',
+    unknown: 'Unknown error',
+  } : {
+    weak: 'Şifre en az 8 karakter olmalı ve bir rakam içermeli.',
+    mismatch: 'Şifreler eşleşmiyor.',
+    same: 'Yeni şifre eskisiyle aynı olamaz.',
+    failed: 'Şifre güncellenemedi: ',
+    unknown: 'Bilinmeyen hata',
+  };
+  if (EN) {
+    document.documentElement.lang = 'en';
+    document.title = 'StampWorld — Set a New Password';
+    var set = function (id, txt) {
+      var n = document.getElementById(id);
+      if (n) n.textContent = txt;
+    };
+    set('h1t', 'Set a new password');
+    set('checking', 'Verifying the link…');
+    set('inv1', 'This password reset link is invalid or has expired.');
+    var inv2 = document.getElementById('inv2');
+    if (inv2) inv2.innerHTML = 'Open the StampWorld app and request a new ' +
+      'link from <strong>Forgot password</strong>.';
+    set('subT', 'Choose a new password for your StampWorld account.');
+    set('l1', 'New password');
+    set('l2', 'New password (again)');
+    set('hintT', 'At least 8 characters, must include a digit.');
+    set('btn', 'Update Password');
+    set('d1', '✅ Your password has been updated.');
+    set('d2', 'You can now return to the StampWorld app and sign in with ' +
+      'your new password. You can close this page.');
+  }
+
   var SUPABASE_URL = 'https://uxyzsbjxrkxajbxfjcgq.supabase.co';
   // Public anon key — istemciye gömülmesi tasarım gereği güvenli (RLS korur).
   var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXpzYmp4cmt4YWpieGZqY2dxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5ODI4ODUsImV4cCI6MjA5NzU1ODg4NX0.sxQp7RFgYNTiCTPLC3bJrB6aZRtC6u8scCsBkASPfxE';
@@ -113,22 +151,22 @@
     var p1 = el('pw1').value, p2 = el('pw2').value;
 
     if (p1.length < 8 || !/\d/.test(p1)) {
-      msg.textContent = 'Şifre en az 8 karakter olmalı ve bir rakam içermeli.';
+      msg.textContent = T.weak;
       msg.className = 'msg err'; return;
     }
     if (p1 !== p2) {
-      msg.textContent = 'Şifreler eşleşmiyor.';
+      msg.textContent = T.mismatch;
       msg.className = 'msg err'; return;
     }
 
     el('btn').disabled = true;
     var upd = await client.auth.updateUser({ password: p1 });
     if (upd.error) {
-      var t = upd.error.message || 'Bilinmeyen hata';
+      var t = upd.error.message || T.unknown;
       if (/same.*password|different from the old/i.test(t)) {
-        t = 'Yeni şifre eskisiyle aynı olamaz.';
+        t = T.same;
       }
-      msg.textContent = 'Şifre güncellenemedi: ' + t;
+      msg.textContent = T.failed + t;
       msg.className = 'msg err';
       el('btn').disabled = false;
       return;

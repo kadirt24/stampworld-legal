@@ -21,8 +21,18 @@
 <body>
 <div class="wrap">
   <div class="logo">✅</div>
-  <h1>E-posta adresin doğrulandı</h1>
-  <p>Artık StampWorld uygulamasına dönüp giriş yapabilirsin.</p>
+  <h1 id="t">E-posta adresin doğrulandı</h1>
+  <p id="s">Artık StampWorld uygulamasına dönüp giriş yapabilirsin.</p>
 </div>
+<script>
+// Tarayıcı dili İngilizceyse metinleri EN'e çevir (varsayılan TR).
+if ((navigator.language || '').toLowerCase().indexOf('en') === 0) {
+  document.documentElement.lang = 'en';
+  document.title = 'StampWorld — Email Confirmed';
+  document.getElementById('t').textContent = 'Your email address is confirmed';
+  document.getElementById('s').textContent =
+    'You can now return to the StampWorld app and sign in.';
+}
+</script>
 </body>
 </html>
