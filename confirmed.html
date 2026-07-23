@@ -16,23 +16,97 @@
     align-items:center; justify-content:center; font-size:32px; }
   h1 { font-size:22px; margin:0 0 10px; letter-spacing:-0.3px; }
   p { color:var(--muted); font-size:15px; margin:0 0 6px; }
+  footer { margin-top:44px; text-align:center; color:var(--muted); font-size:13px; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="logo">✅</div>
+  <div class="logo" id="logo">✅</div>
   <h1 id="t">E-posta adresin doğrulandı</h1>
-  <p id="s">Artık StampWorld uygulamasına dönüp giriş yapabilirsin.</p>
+
+  <!-- Durum: bağlantı doğrulanıyor (yalnızca token_hash'li yeni bağlantıda) -->
+  <p id="checking" style="display:none">Bağlantı doğrulanıyor…</p>
+
+  <!-- Durum: başarı (varsayılan görünür — eski tip yönlendirmede sunucu zaten doğruladı) -->
+  <div id="done">
+    <p id="s">Artık StampWorld uygulamasına dönüp giriş yapabilirsin.</p>
+  </div>
+
+  <!-- Durum: geçersiz/süresi dolmuş bağlantı -->
+  <div id="invalid" style="display:none">
+    <p id="inv1">Bu doğrulama bağlantısı geçersiz ya da süresi dolmuş.</p>
+    <p id="inv2">StampWorld uygulamasını açıp yeniden kayıt olabilir ya da yeni bir
+      doğrulama maili isteyebilirsin.</p>
+  </div>
+
+  <footer>© 2026 StampWorld</footer>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-// Tarayıcı dili İngilizceyse metinleri EN'e çevir (varsayılan TR).
-if ((navigator.language || '').toLowerCase().indexOf('en') === 0) {
-  document.documentElement.lang = 'en';
-  document.title = 'StampWorld — Email Confirmed';
-  document.getElementById('t').textContent = 'Your email address is confirmed';
-  document.getElementById('s').textContent =
-    'You can now return to the StampWorld app and sign in.';
-}
+(async function () {
+  var el = function (id) { return document.getElementById(id); };
+  function show(id) {
+    ['checking', 'done', 'invalid'].forEach(function (s) {
+      el(s).style.display = (s === id) ? 'block' : 'none';
+    });
+  }
+
+  // Tarayıcı dili İngilizceyse arayüz EN olur (varsayılan TR).
+  var EN = (navigator.language || '').toLowerCase().indexOf('en') === 0;
+  var TXT = EN ? {
+    okTitle: 'Your email address is confirmed',
+    okSub: 'You can now return to the StampWorld app and sign in.',
+    checking: 'Verifying the link…',
+    badTitle: 'Link invalid',
+    inv1: 'This confirmation link is invalid or has expired.',
+    inv2: 'Open the StampWorld app to sign up again or request a new confirmation email.',
+  } : {
+    okTitle: 'E-posta adresin doğrulandı',
+    okSub: 'Artık StampWorld uygulamasına dönüp giriş yapabilirsin.',
+    checking: 'Bağlantı doğrulanıyor…',
+    badTitle: 'Bağlantı geçersiz',
+    inv1: 'Bu doğrulama bağlantısı geçersiz ya da süresi dolmuş.',
+    inv2: 'StampWorld uygulamasını açıp yeniden kayıt olabilir ya da yeni bir doğrulama maili isteyebilirsin.',
+  };
+  if (EN) {
+    document.documentElement.lang = 'en';
+    document.title = 'StampWorld — Email Confirmed';
+  }
+  el('t').textContent = TXT.okTitle;
+  el('s').textContent = TXT.okSub;
+  el('checking').textContent = TXT.checking;
+  el('inv1').textContent = TXT.inv1;
+  el('inv2').textContent = TXT.inv2;
+
+  var params = new URLSearchParams(location.search);
+  var tokenHash = params.get('token_hash');
+  var type = params.get('type') || 'email';
+
+  // Eski tip bağlantı: token_hash YOK → sunucu (supabase.co/verify) zaten
+  // doğrulayıp buraya yönlendirmiş. Başarı durumu zaten görünür.
+  if (!tokenHash) return;
+
+  // Yeni tip: doğrulamayı burada yap (link alanı = gönderen alanı).
+  show('checking');
+  var SUPABASE_URL = 'https://uxyzsbjxrkxajbxfjcgq.supabase.co';
+  // Public anon key — istemciye gömülmesi tasarım gereği güvenli (RLS korur).
+  var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXpzYmp4cmt4YWpieGZqY2dxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5ODI4ODUsImV4cCI6MjA5NzU1ODg4NX0.sxQp7RFgYNTiCTPLC3bJrB6aZRtC6u8scCsBkASPfxE';
+  var client = window.supabase.createClient(SUPABASE_URL, ANON_KEY, {
+    auth: { detectSessionInUrl: false, persistSession: false },
+  });
+
+  var res = await client.auth.verifyOtp({ type: type, token_hash: tokenHash });
+  if (res.error) {
+    el('logo').textContent = '⚠️';
+    el('t').textContent = TXT.badTitle;
+    show('invalid');
+    return;
+  }
+  // Doğrulama tamam. Tarayıcıda oturum bırakma (uygulamada giriş yapacak).
+  try { await client.auth.signOut({ scope: 'local' }); } catch (e) {}
+  show('done');
+})();
 </script>
 </body>
 </html>
